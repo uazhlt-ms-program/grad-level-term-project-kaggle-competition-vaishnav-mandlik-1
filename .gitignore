@@ -1,4 +1,8 @@
 
+# Data and output (download from Kaggle)
+data/
+output/
+
 # Python
 .pypirc
 

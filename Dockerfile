@@ -1,24 +1,16 @@
-FROM pytorch/pytorch:1.9.1-cuda11.1-cudnn8-runtime
+FROM python:3.10-slim
 
-LABEL author="Gus Hahn-Powell"
-LABEL description="Default container definition for class competition."
+LABEL author="Vaishnav Mandlik"
+LABEL description="LING 539 text classification pipeline"
 
-# Create app directory
 WORKDIR /app
 
-RUN pip install -U pytorch-lightning \
-    graphviz==0.16 \
-    "ipython>=7.20.0,<8" \
-    notebook==6.4.6 \
-    jupyter-client==7.1.2 \
-    jupyter-contrib-nbextensions==0.5.1 \
-    && jupyter contrib nbextension install --user
+# Install dependencies
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
 
-# copy executables to path
-COPY . ./
-RUN chmod u+x  scripts/* \
-    && mv scripts/* /usr/local/bin/ \
-    && rmdir scripts
+# Copy source code
+COPY classify.py ./
 
-# launch jupyter by default
-CMD ["/bin/bash", "launch-notebook"]
+# Default: generate submission
+CMD ["python", "classify.py", "--submit-only"]

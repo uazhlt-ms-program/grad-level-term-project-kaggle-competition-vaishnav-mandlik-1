@@ -1,17 +1,82 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/iA_HXS2O)
-# Task
+# LING 539 Text Classification — Kaggle Competition
 
-The task is described at [https://uazhlt-ms-program.github.io/ling-539-competition-2026/assignments/class-competition/](https://uazhlt-ms-program.github.io/ling-539-competition-2026/assignments/class-competition/)
+Text classification system for the LING 539 (Spring 2026) Kaggle competition.  
+Classifies documents as **not a review (0)**, **positive review (1)**, or **negative review (2)**.
 
-The competition is hosted at [https://www.kaggle.com/competitions/ling-539-competition-2026](https://www.kaggle.com/competitions/ling-539-competition-2026)
+## Approach
 
-**To join the competition, you must accept it at the following URL**: [https://www.kaggle.com/t/03c8dd2e91474ec1b64203601079805b](https://www.kaggle.com/t/03c8dd2e91474ec1b64203601079805b)
+1. **Text Preprocessing** — Lowercasing, HTML tag removal, URL removal, whitespace normalization  
+2. **Feature Extraction** — TF-IDF vectorization with:
+   - Word-level n-grams (1–3) capturing content words, bigrams, and trigrams
+   - Character-level n-grams (2–6) capturing morphological patterns and subword information  
+3. **Classification** — LinearSVC (Support Vector Machine) with balanced class weights
 
-# Notes
-- This project involves a **performance evaluation** as well as your **graded assessment**. It's important to keep these two things separate in your mind.
-  - The rubric which will be used to assess your submission *for a grade* (ie, not to evaluate the performance of your model) is in the D2L assignment item
-  - You are permitted to propose more than one classification model or approach. However, as described on the assessment rubric, **at least one of your submitted models must use one or more of the classification algorithms covered in this course.** (For more details related to assessment, be sure you understand the details of that rubric)
-  - The performance of your model will be evaluated by Kaggle, and your model's performance will be ranked against other class submissions. The performance of your model is **one**, but not the only, factor by which your model will be assessed for a grade
-- You are encouraged, but not obligated, to use Python
-- You may delete or alter any files in this repository
-- You are free to add dependencies, **however**, ensure that your code can be installed/used on another machine running Linux or MacOS (consider containerizing your project with Docker or an equivalent technology)
+**Algorithms covered in LING 539:**  
+- TF-IDF (Term Frequency–Inverse Document Frequency)  
+- SVM (Support Vector Machine) via `LinearSVC`
+
+## Results
+
+- **Cross-validation macro F1:** ~0.924  
+- **Kaggle leaderboard:** Rank 20 (public leaderboard)
+
+## Repository Structure
+
+```
+├── classify.py          # Main classification pipeline
+├── data/
+│   ├── train.csv        # Training data (download from Kaggle)
+│   ├── test.csv         # Test data (download from Kaggle)
+│   └── sample_submission.csv
+├── output/
+│   └── submission.csv   # Generated predictions for Kaggle
+├── requirements.txt     # Python dependencies
+├── Dockerfile           # Container definition for reproducibility
+└── README.md
+```
+
+## Setup & Usage
+
+### Option 1: Local (Python 3.8+)
+
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Download data from Kaggle and place in data/ directory
+# https://www.kaggle.com/competitions/ling-539-competition-2026/data
+
+# Run full pipeline (cross-validation + submission)
+python classify.py
+
+# Run cross-validation only
+python classify.py --cv-only
+
+# Generate submission only (skip CV)
+python classify.py --submit-only
+```
+
+### Option 2: Docker
+
+```bash
+# Build the container
+docker build -t ling539-classifier .
+
+# Run the classifier
+docker run -v $(pwd)/data:/app/data -v $(pwd)/output:/app/output ling539-classifier python classify.py --submit-only
+```
+
+## Dependencies
+
+- Python 3.8+
+- scikit-learn
+- pandas
+- numpy
+- scipy
+
+See `requirements.txt` for full list.
+
+## Competition
+
+- **Competition page:** [LING 539 Kaggle Competition](https://www.kaggle.com/competitions/ling-539-competition-2026)
+- **Task description:** [Assignment page](https://uazhlt-ms-program.github.io/ling-539-competition-2026/assignments/class-competition/)
